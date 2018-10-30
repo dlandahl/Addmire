@@ -7,7 +7,6 @@
 int main()
 {
     using namespace add;
-    std::cout << "Welcome to Addmire\n";
 
     std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
 
@@ -20,8 +19,10 @@ int main()
     addmire_init();
 
     Cluster c;
-    init_cluster_to_wave(&c, 440, WaveType::Sine);
-    samples_from_cluster(&c, data, num_samples);
+    init_cluster_to_wave(&c, 55.f, WaveType::Square);
+
+    for (unsigned n = 0; n < num_samples; n++)
+        samples_from_cluster(&c, data + n, 1);
 
 	for (unsigned i = 0; i < num_samples; i++)
 	{

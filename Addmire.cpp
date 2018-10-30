@@ -48,12 +48,33 @@ void init_cluster_to_wave(Cluster* cluster, float fundamental, WaveType wave)
         for (unsigned n = 0; n < Cluster::max_size; n++)
         {
             if (fundamental * (n + 1) >= var::sample_rate / 2)
-                cluster->partials_used = n; return;
+            {
+                cluster->partials_used = n;
+                return;
+            }
             
             init_partial(&cluster->partials[n]);
             cluster->partials[n].frequency = (float) fundamental * (n + 1);
             cluster->partials[n].amplitude = (float) 1 / (n + 1);
         }
+        return;
+    }
+
+    if (wave == WaveType::Square)
+    {
+        for (unsigned n = 0; n < Cluster::max_size; n++)
+        {
+            if (fundamental * (2 * n + 1) >= var::sample_rate / 2)
+            {
+                cluster->partials_used = n;
+                return;
+            }
+            
+            init_partial(&cluster->partials[n]);
+            cluster->partials[n].frequency = (float) fundamental * (2 * n + 1);
+            cluster->partials[n].amplitude = (float) 1 / (2 * n + 1);
+        }
+        return;
     }
 }
 
@@ -65,7 +86,7 @@ void samples_from_cluster(Cluster* cluster, float* buffer, int buffersize)
 
         for (unsigned s = 0; s < buffersize; s++)
         {
-            buffer[s] += std::sin(6.28318530 * partial.current_phase + partial.offset_phase);
+            buffer[s] += partial.amplitude * std::sin(6.28318530 * partial.current_phase + partial.offset_phase);
             partial.current_phase += double(partial.frequency) / var::sample_rate;
             if (partial.current_phase >= 1.0) { partial.current_phase -= 1.0; }
         }
