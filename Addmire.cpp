@@ -1,17 +1,56 @@
 
 #include <cmath>
+#include <float.h>
 #include <iostream>
 
 #include "Addmire.h"
 
 namespace add {
 
-namespace var { double sample_rate; }
+namespace var {
+    double sample_rate;
+}
 
 void addmire_init(double sr /*=44100.0*/)
 {
     var::sample_rate = sr;
 }
+
+PartialIndexTransform WaveTransforms::Sine
+    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
+{
+    if (n == 0)
+    {
+        frequency = fundamental;
+        amplitude = 1.f;
+        return;
+    }
+    frequency = FLT_MAX;
+};
+
+PartialIndexTransform WaveTransforms::Saw
+    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
+{
+    frequency = (n + 1) * fundamental;
+    amplitude = 1.f / (n + 1);
+};
+
+PartialIndexTransform WaveTransforms::Square
+    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
+{
+    frequency = (2 * n + 1) * fundamental;
+    amplitude = 1.f / (2 * n + 1);
+};
+
+PartialIndexTransform WaveTransforms::Tri
+    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
+{
+    static bool flip = false;
+    frequency = (2 * n + 1)  * fundamental;
+    amplitude = 1.f / pow(n+1, 2);
+    if (flip) { amplitude = -amplitude; }
+    flip = !flip;
+};
 
 Partial make_partial(float frequency /*=100.f*/, float phase /*=0.f*/, float amplitude /*=1.f*/)
 { return Partial{ frequency, phase, amplitude, 0.f }; }
@@ -34,61 +73,36 @@ void init_cluster(Cluster* cluster, int size)
     cluster->partials_used = size;
 }
 
-void init_cluster_to_wave(Cluster* cluster, float fundamental, WaveType wave)
+void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTransform transform)
 {
-    if (wave == WaveType::Sine)
+    for (unsigned n = 0; n < Cluster::max_size; n++)
     {
-        cluster->partials_used = 1;
-        cluster->partials[0] = make_partial(fundamental);
-        return;
-    }
+        Partial& partial = cluster->partials[n];
+        init_partial(&partial);
 
-    if (wave == WaveType::Saw)
-    {
-        for (unsigned n = 0; n < Cluster::max_size; n++)
-        {
-            if (fundamental * (n + 1) >= var::sample_rate / 2)
-            {
-                cluster->partials_used = n;
-                return;
-            }
-            
-            init_partial(&cluster->partials[n]);
-            cluster->partials[n].frequency = (float) fundamental * (n + 1);
-            cluster->partials[n].amplitude = (float) 1 / (n + 1);
-        }
-        return;
-    }
+        transform(n, fundamental, partial.frequency, partial.amplitude);
 
-    if (wave == WaveType::Square)
-    {
-        for (unsigned n = 0; n < Cluster::max_size; n++)
+        if (partial.frequency >= var::sample_rate / 2)
         {
-            if (fundamental * (2 * n + 1) >= var::sample_rate / 2)
-            {
-                cluster->partials_used = n;
-                return;
-            }
-            
-            init_partial(&cluster->partials[n]);
-            cluster->partials[n].frequency = (float) fundamental * (2 * n + 1);
-            cluster->partials[n].amplitude = (float) 1 / (2 * n + 1);
+            cluster->partials_used = n;
+            return;
         }
-        return;
     }
+    return;
 }
 
 void samples_from_cluster(Cluster* cluster, float* buffer, int buffersize)
 {
-    for (unsigned p = 0; p < cluster->partials_used; p++)
+    for (unsigned n = 0; n < cluster->partials_used; n++)
     {
-        Partial &partial = cluster->partials[p];
+        Partial &p = cluster->partials[n];
+        //auto& [frequency, offset, amplitude, phase] = p;
 
         for (unsigned s = 0; s < buffersize; s++)
         {
-            buffer[s] += partial.amplitude * std::sin(6.28318530 * partial.current_phase + partial.offset_phase);
-            partial.current_phase += double(partial.frequency) / var::sample_rate;
-            if (partial.current_phase >= 1.0) { partial.current_phase -= 1.0; }
+            buffer[s] += p.amplitude * std::sin(6.28318530 * p.current_phase + p.offset_phase);
+            p.current_phase += double(p.frequency) / var::sample_rate;
+            if (p.current_phase >= 1.0) { p.current_phase -= 1.0; }
         }
     }
 }

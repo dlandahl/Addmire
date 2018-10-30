@@ -15,6 +15,13 @@ enum WaveType
     Saw
 };
 
+using PartialIndexTransform = void (*)(unsigned, float, float&, float&);
+
+namespace WaveTransforms
+{
+extern PartialIndexTransform Sine, Tri, Square, Saw;
+}
+
 struct Partial
 {
     float frequency;
@@ -35,7 +42,7 @@ struct Cluster
 };
 
 void init_cluster(Cluster* cluster_to_init, int cluster_size);
-void init_cluster_to_wave(Cluster* cluster, float fundamental, WaveType wave);
+void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTransform transform);
 void samples_from_cluster(Cluster* cluster, float* buffer, int sample_count);
 
 }

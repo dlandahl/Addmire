@@ -8,8 +8,6 @@ int main()
 {
     using namespace add;
 
-    std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
-
     const unsigned num_samples = 22050;
     float data[num_samples];
 
@@ -19,15 +17,13 @@ int main()
     addmire_init();
 
     Cluster c;
-    init_cluster_to_wave(&c, 55.f, WaveType::Square);
+    init_cluster_to_wave(&c, 159.f, WaveTransforms::Tri);
 
-    for (unsigned n = 0; n < num_samples; n++)
-        samples_from_cluster(&c, data + n, 1);
+    samples_from_cluster(&c, data, 22050);
 
-	for (unsigned i = 0; i < num_samples; i++)
-	{
-		file.write((const char*)& data[i], sizeof(float));
-	}
+    std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
+	for (unsigned n = 0; n < num_samples; n++)
+		file.write((const char*)& data[n], sizeof(float));
 
     file.close();
 }
