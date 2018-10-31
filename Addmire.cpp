@@ -48,11 +48,8 @@ PartialIndexTransform WaveTransforms::Square
 PartialIndexTransform WaveTransforms::Tri
     = [](unsigned n, float fundamental, float& frequency, float& amplitude)
 {
-    static bool flip = false;
-    frequency = (2 * n + 1)  * fundamental;
-    amplitude = 1.f / pow(n+1, 2);
-    if (flip) { amplitude = -amplitude; }
-    flip = !flip;
+    frequency = (2 * n + 1) * fundamental;
+    amplitude = pow(-1.f, n) / pow(2 * n + 1, 2);
 };
 
 Partial make_partial(float frequency /*=100.f*/, float phase /*=0.f*/, float amplitude /*=1.f*/)
