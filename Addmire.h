@@ -2,25 +2,21 @@
 #pragma once
 
 namespace add {
-
-namespace var { extern double sample_rate; };
+namespace var {
+    extern double sample_rate;
+    extern const float tau;
+};
 
 void addmire_init(double sr=44100.0);
 
-enum WaveType
-{
-    Sine,
-    Tri,
-    Square,
-    Saw
-};
+struct Cluster;
 
-using PartialIndexTransform = void (*)(unsigned, float, float&, float&);
+using PartialIndexTransform = void (*)(unsigned partial_index, float fundamental,
+    float &frequency, float &amplitude);
+using AdditiveProcess = void (*)(Cluster* cluster_to_process, float* arguments, unsigned argument_count);
 
 namespace WaveTransforms
-{
-extern PartialIndexTransform Sine, Tri, Square, Saw;
-}
+{ extern PartialIndexTransform Sine, Tri, Square, Saw; }
 
 struct Partial
 {
@@ -44,5 +40,7 @@ struct Cluster
 void init_cluster(Cluster* cluster_to_init, int cluster_size);
 void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTransform transform);
 void samples_from_cluster(Cluster* cluster, float* buffer, int sample_count);
+
+extern AdditiveProcess random_phase;
 
 }
