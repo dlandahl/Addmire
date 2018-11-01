@@ -110,4 +110,20 @@ AdditiveProcess random_phase
         cluster->partials[n].offset_phase += distribution(generator);
 };
 
+AdditiveProcess repitch_ratio
+    = [](Cluster* cluster, float* args, unsigned argc)
+{
+    if (args == nullptr) return;
+    for (unsigned n = 0; n < cluster->partials_used; n++)
+        cluster->partials[n].frequency *= args[0];
+};
+
+AdditiveProcess repitch_hz
+    = [](Cluster* cluster, float* args, unsigned argc)
+{
+    if (args == nullptr) return;
+    for (unsigned n = 0; n < cluster->partials_used; n++)
+        cluster->partials[n].frequency += args[0];
+};
+
 }
