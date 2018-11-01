@@ -42,6 +42,6 @@ void init_cluster(Cluster* cluster_to_init, int cluster_size);
 void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTransform transform);
 void samples_from_cluster(Cluster* cluster, float* buffer, int sample_count);
 
-extern AdditiveProcess random_phase;
+extern AdditiveProcess random_phase, reptich_ratio, repitch_hz;
 
 }
