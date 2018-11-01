@@ -12,8 +12,8 @@ int Cluster::partials_used;
 
 namespace var {
     float sample_rate;
-    const float tau = 6.28318530;
     float nyquist;
+    const float tau = 6.28318530;
 }
 
 void addmire_init(float sr /*=44100.0*/, int partialc /*=512*/)
