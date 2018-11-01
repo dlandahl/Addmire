@@ -3,11 +3,12 @@
 
 namespace add {
 namespace var {
-    extern double sample_rate;
+    extern float sample_rate;
+    extern float nyquist;
     extern const float tau;
 };
 
-void addmire_init(double sr=44100.0);
+void addmire_init(float sample_rate=44100.0f, int partial_count=512);
 
 struct Cluster;
 
@@ -32,7 +33,7 @@ void    init_partial(Partial* partial_to_init);
 struct Cluster
 {
     const static int max_size = 1024;
-    int partials_used;
+    static int partials_used;
 
     Partial partials[max_size];
 };
