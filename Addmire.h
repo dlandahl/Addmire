@@ -6,6 +6,8 @@ namespace var {
     extern const float tau;
     float get_nyquist();
     float get_sample_rate();
+    void set_sample_rate(float new_sample_rate);
+    void set_partial_count(int new_partial_count);
 };
 
 void addmire_init(float sample_rate=44100.0f, int partial_count=512);
@@ -15,9 +17,6 @@ struct Cluster;
 using PartialIndexTransform = void (*)(unsigned partial_index, float fundamental,
     float &frequency, float &amplitude);
 using AdditiveProcess = void (*)(Cluster* cluster_to_process, float* arguments, unsigned argument_count);
-
-namespace WaveTransforms
-{ extern PartialIndexTransform Sine, Tri, Square, Saw; }
 
 struct Partial
 {
@@ -42,6 +41,10 @@ void init_cluster(Cluster* cluster_to_init, int cluster_size);
 void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTransform transform);
 void samples_from_cluster(Cluster* cluster, float* buffer, int sample_count);
 
-extern AdditiveProcess random_phase, repitch_ratio, repitch_hz;
+namespace wavetable
+{
+    extern const int table_size;
+    float get_value();
+};
 
 }

@@ -11,47 +11,46 @@ int Cluster::partials_used;
 namespace var {
     const float tau = 6.28318530;
     namespace { float nyquist, sample_rate; }
+    
     float get_nyquist()     { return nyquist; }
     float get_sample_rate() { return sample_rate; }
+
+    void set_sample_rate(float sample_rate) {
+        var::sample_rate = sample_rate;
+        var::nyquist = sample_rate / 2.f;
+    }
+
+    void set_partial_count(int partialc) {
+        Cluster::partials_used = partialc;
+    }
 }
 
-void addmire_init(float sr /*=44100.0*/, int partialc /*=512*/)
+namespace wavetable
 {
-    var::sample_rate = sr;
-    var::nyquist = sr / 2.f;
+    const int table_size = 512;
+    namespace { float table[table_size]; }
+
+    float get_value(float phase)
+    {
+        while(phase >= 1.f) { phase -= 1.f; }
+        while(phase < 0.f)  { phase += 1.f; }
+        phase *= 512;
+
+        return table[(int)phase];
+    }
+};
+
+void addmire_init(float sample_rate /*=44100.0*/, int partialc /*=512*/)
+{
+    var::sample_rate = sample_rate;
+    var::nyquist = sample_rate / 2.f;
     Cluster::partials_used = partialc;
+
+    for (int n = 0; n < wavetable::table_size; n++)
+    {
+        wavetable::table[n] = sinf(var::tau * n / wavetable::table_size);
+    }
 }
-
-PartialIndexTransform WaveTransforms::Sine
-    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
-{
-    amplitude = 0.f;
-    frequency = fundamental;
-
-    if (n == 0)
-        amplitude = 1.f;
-};
-
-PartialIndexTransform WaveTransforms::Saw
-    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
-{
-    frequency = (n + 1) * fundamental;
-    amplitude = 1.f / (n + 1);
-};
-
-PartialIndexTransform WaveTransforms::Square
-    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
-{
-    frequency = (2 * n + 1) * fundamental;
-    amplitude = 1.f / (2 * n + 1);
-};
-
-PartialIndexTransform WaveTransforms::Tri
-    = [](unsigned n, float fundamental, float& frequency, float& amplitude)
-{
-    frequency = (2 * n + 1) * fundamental;
-    amplitude = pow(-1.f, n) / pow(2 * n + 1, 2);
-};
 
 Partial make_partial(float frequency /*=100.f*/, float phase /*=0.f*/, float amplitude /*=1.f*/)
 { return Partial{ frequency, phase, amplitude, 0.f }; }
@@ -94,35 +93,9 @@ void samples_from_cluster(Cluster* cluster, float* buffer, int buffersize)
 
         for (unsigned s = 0; s < buffersize; s++)
         {
-            buffer[s] += amplitude * std::sin(var::tau * phase + offset);
+            buffer[s] += amplitude * wavetable::get_value(phase + offset / var::tau);
             phase += double(frequency) / var::sample_rate;
             if (phase >= 1.0) { phase -= 1.0; }
 }   }   }
-
-AdditiveProcess random_phase
-    = [](Cluster* cluster, float* args, unsigned argc)
-{
-    static std::default_random_engine generator;
-    std::uniform_real_distribution<float> distribution(0.f, (args != nullptr) ? args[0] : var::tau);
-
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
-        cluster->partials[n].offset_phase += distribution(generator);
-};
-
-AdditiveProcess repitch_ratio
-    = [](Cluster* cluster, float* args, unsigned argc)
-{
-    if (args == nullptr) return;
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
-        cluster->partials[n].frequency *= args[0];
-};
-
-AdditiveProcess repitch_hz
-    = [](Cluster* cluster, float* args, unsigned argc)
-{
-    if (args == nullptr) return;
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
-        cluster->partials[n].frequency += args[0];
-};
 
 }

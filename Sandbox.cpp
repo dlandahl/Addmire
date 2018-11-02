@@ -1,8 +1,10 @@
 
 #include <iostream>
 #include <fstream>
+#include <array>
 
 #include "Addmire.h"
+#include "AddmireAlgorithms.h"
 
 using namespace add;
 
@@ -32,8 +34,8 @@ int main()
     addmire_init();
 
     Cluster c;
-    init_cluster_to_wave(&c, 100, my_transform);
-    //repitch_ratio(&c, &repitch_amount, 1U);
+    init_cluster_to_wave(&c, 100.f, WaveTransforms::Tri);
+    repitch_ratio(&c, &repitch_amount, 1U);
 
     samples_from_cluster(&c, data, num_samples);
 
