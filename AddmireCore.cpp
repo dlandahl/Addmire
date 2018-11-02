@@ -2,7 +2,7 @@
 #include <cmath>
 #include <random>
 
-#include "Addmire.h"
+#include "AddmireCore.h"
 
 namespace add {
 
