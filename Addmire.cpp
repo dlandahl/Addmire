@@ -1,7 +1,5 @@
 
 #include <cmath>
-#include <float.h>
-#include <iostream>
 #include <random>
 
 #include "Addmire.h"
@@ -11,9 +9,10 @@ namespace add {
 int Cluster::partials_used;
 
 namespace var {
-    float sample_rate;
-    float nyquist;
     const float tau = 6.28318530;
+    namespace { float nyquist, sample_rate; }
+    float get_nyquist()     { return nyquist; }
+    float get_sample_rate() { return sample_rate; }
 }
 
 void addmire_init(float sr /*=44100.0*/, int partialc /*=512*/)

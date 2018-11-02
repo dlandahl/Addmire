@@ -3,9 +3,9 @@
 
 namespace add {
 namespace var {
-    extern float sample_rate;
-    extern float nyquist;
     extern const float tau;
+    float get_nyquist();
+    float get_sample_rate();
 };
 
 void addmire_init(float sample_rate=44100.0f, int partial_count=512);
