@@ -3,7 +3,7 @@
 #include <fstream>
 #include <array>
 
-#include "Addmire.h"
+#include "AddmireCore.h"
 #include "AddmireAlgorithms.h"
 
 using namespace add;
@@ -35,7 +35,7 @@ int main()
 
     Cluster c;
     init_cluster_to_wave(&c, 100.f, WaveTransforms::Tri);
-    repitch_ratio(&c, &repitch_amount, 1U);
+    AdditiveProcesses::repitch_ratio(&c, &repitch_amount, 1U);
 
     samples_from_cluster(&c, data, num_samples);
 
