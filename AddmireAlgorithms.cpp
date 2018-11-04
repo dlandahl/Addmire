@@ -3,7 +3,7 @@
 
 #include "AddmireAlgorithms.h"
 
-using namespace add;
+namespace add {
 
 namespace WaveTransforms
 {
@@ -65,4 +65,6 @@ AdditiveProcess repitch_hz
     for (unsigned n = 0; n < Cluster::partials_used; n++)
         cluster->partials[n].frequency += args[0];
 };
+}
+
 }
