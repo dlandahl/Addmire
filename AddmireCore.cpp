@@ -23,8 +23,7 @@ namespace var {
 
     void set_partial_count(int partialc) {
         Cluster::partials_used = partialc;
-    }
-}
+}   }
 
 namespace wavetable
 {
@@ -38,8 +37,7 @@ namespace wavetable
         phase *= 512;
 
         return table[(int)phase];
-    }
-};
+}   };
 
 void addmire_init(float sample_rate /*=44100.0*/, int partialc /*=512*/)
 {
@@ -50,8 +48,7 @@ void addmire_init(float sample_rate /*=44100.0*/, int partialc /*=512*/)
     for (int n = 0; n < wavetable::table_size; n++)
     {
         wavetable::table[n] = sinf(var::tau * n / wavetable::table_size);
-    }
-}
+}   }
 
 Partial::Partial()
 {
@@ -113,7 +110,6 @@ void Cluster::draw()
             file << data[y_res - y] << ' ';
 
         file << '\n';
-    }
-}
+}   }
 
 }
