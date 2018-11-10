@@ -8,22 +8,14 @@
 
 using namespace add;
 
-PartialIndexTransform my_transform
-    = [](unsigned n, float fundamental, float &frequency, float &amplitude)
-{
-    amplitude = 0.f;
-    frequency = fundamental * (n+1);
-    if (!(n % 3)) amplitude = 1.f / (n + 1);
-};
-
 int main()
 {
-    const unsigned num_samples = 22050U;
+    const unsigned num_samples = 44100U * 10;
     float data[num_samples] = { 0 };
 
     addmire_init();
 
-    Cluster c(300.f, WaveTransforms::Sine);
+    Cluster c(1000.f, WaveTransforms::Sine);
 
     c.draw();
 

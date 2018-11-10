@@ -54,7 +54,7 @@ Partial::Partial()
 {
     frequency     = 100.f;
     offset_phase  = 0.f;
-    amplitude     = 1.f;
+    amplitude     = 0.f;
     current_phase = 0.f;
 }
 
@@ -62,12 +62,12 @@ Cluster::Cluster(float fundamental, PartialIndexTransform transform)
 {
     for (unsigned n = 0; n < Cluster::partials_used; n++)
     {
-        Partial& partial = partials[n];
+        Partial& p = partials[n];
 
-        transform(n, fundamental, partial.frequency, partial.amplitude);
+        transform(n, fundamental, p);
 
-        if (partial.frequency >= var::get_nyquist())
-            partial.amplitude = 0.f;
+        if (p.frequency >= var::get_nyquist())
+            p.amplitude = 0.f;
 }   }
 
 void Cluster::get_samples(float* buffer, int buffersize)
@@ -75,7 +75,7 @@ void Cluster::get_samples(float* buffer, int buffersize)
     for (unsigned n = 0; n < Cluster::partials_used; n++)
     {
         auto& [frequency, offset, amplitude, phase] = partials[n];
-        if (frequency >= var::nyquist || amplitude == 0.f) continue;
+        if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
 
         for (unsigned s = 0; s < buffersize; s++)
         {

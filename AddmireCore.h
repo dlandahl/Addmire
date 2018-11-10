@@ -12,11 +12,6 @@ namespace var {
 
 void addmire_init(float sample_rate=44100.0f, int partial_count=512);
 
-struct Cluster;
-
-using PartialIndexTransform = void (*)(unsigned partial_index, float fundamental,
-    float &frequency, float &amplitude);
-
 struct Partial
 {
     float frequency;
@@ -26,6 +21,9 @@ struct Partial
 
     Partial();
 };
+
+using PartialIndexTransform = void (*)(unsigned partial_index, float fundamental,
+    Partial &partial);
 
 class Cluster
 {
