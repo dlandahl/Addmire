@@ -53,31 +53,19 @@ void addmire_init(float sample_rate /*=44100.0*/, int partialc /*=512*/)
     }
 }
 
-Partial make_partial(float frequency /*=100.f*/, float phase /*=0.f*/, float amplitude /*=1.f*/)
-{ return Partial{ frequency, phase, amplitude, 0.f }; }
-
-void init_partial(Partial* partial)
+Partial::Partial()
 {
-    partial->frequency     = 100.f;
-    partial->offset_phase  = 0.f;
-    partial->amplitude     = 1.f;
-    partial->current_phase = 0.f;
+    frequency     = 100.f;
+    offset_phase  = 0.f;
+    amplitude     = 1.f;
+    current_phase = 0.f;
 }
 
-void init_cluster(Cluster* cluster, int size)
-{
-    for (unsigned n = 0; n < size; n++)
-        init_partial(&cluster->partials[n]);
-
-    cluster->partials_used = size;
-}
-
-void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTransform transform)
+Cluster::Cluster(float fundamental, PartialIndexTransform transform)
 {
     for (unsigned n = 0; n < Cluster::partials_used; n++)
     {
-        Partial& partial = cluster->partials[n];
-        init_partial(&partial);
+        Partial& partial = partials[n];
 
         transform(n, fundamental, partial.frequency, partial.amplitude);
 
@@ -85,11 +73,11 @@ void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTrans
             partial.amplitude = 0.f;
 }   }
 
-void samples_from_cluster(Cluster* cluster, float* buffer, int buffersize)
+void Cluster::get_samples(float* buffer, int buffersize)
 {
     for (unsigned n = 0; n < Cluster::partials_used; n++)
     {
-        auto& [frequency, offset, amplitude, phase] = cluster->partials[n];
+        auto& [frequency, offset, amplitude, phase] = partials[n];
         if (frequency >= var::nyquist || amplitude == 0.f) continue;
 
         for (unsigned s = 0; s < buffersize; s++)
@@ -99,7 +87,7 @@ void samples_from_cluster(Cluster* cluster, float* buffer, int buffersize)
             if (phase >= 1.0) { phase -= 1.0; }
 }   }   }
 
-void draw_cluster(Cluster* cluster)
+void Cluster::draw()
 {
     const int y_res = 1000;
     const int x_res = 250;
@@ -110,8 +98,8 @@ void draw_cluster(Cluster* cluster)
 
     for (unsigned n = 0; n < Cluster::partials_used; n++)
     {
-        if (cluster->partials[n].frequency >= var::get_nyquist()) continue;
-        data[int(sqrt(cluster->partials[n].frequency) * y_res / sqrt(var::get_nyquist()))] = '0';
+        if (partials[n].frequency >= var::get_nyquist()) continue;
+        data[int(sqrt(partials[n].frequency) * y_res / sqrt(var::get_nyquist()))] = '0';
     }
 
     std::fstream file("test_image.pbm", std::fstream::out | std::fstream::binary);

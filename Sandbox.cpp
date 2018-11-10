@@ -29,12 +29,11 @@ int main()
 
     addmire_init();
 
-    Cluster c;
-    init_cluster_to_wave(&c, 300.f, WaveTransforms::Tri);
+    Cluster c(300.f, WaveTransforms::Sine);
 
-    draw_cluster(&c);
+    c.draw();
 
-    samples_from_cluster(&c, data, num_samples);
+    c.get_samples(data, num_samples);
 
     std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
 	for (unsigned n = 0U; n < num_samples; n++)

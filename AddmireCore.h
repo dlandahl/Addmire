@@ -24,23 +24,24 @@ struct Partial
     float offset_phase;
     float amplitude;
     float current_phase;
+
+    Partial();
 };
 
-Partial make_partial(float frequency=100.f, float phase=0.f, float amplitude=1.f);
-void    init_partial(Partial* partial_to_init);
-
-struct Cluster
+class Cluster
 {
+public:
     const static int max_size = 1024;
     static int partials_used;
 
     Partial partials[max_size];
-};
 
-void init_cluster(Cluster* cluster_to_init, int cluster_size);
-void init_cluster_to_wave(Cluster* cluster, float fundamental, PartialIndexTransform transform);
-void samples_from_cluster(Cluster* cluster, float* buffer, int sample_count);
-void draw_cluster(Cluster* cluster);
+    Cluster() = default;
+    Cluster(float fundamental, PartialIndexTransform transform);
+    void get_samples(float* buffer, int sample_count);
+    void draw();
+
+};
 
 namespace wavetable
 {
