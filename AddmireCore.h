@@ -12,6 +12,12 @@ namespace var {
 
 void addmire_init(float sample_rate=44100.0f, int partial_count=512);
 
+namespace wavetable
+{
+    extern const int table_size;
+    float get_value();
+};
+
 struct Partial
 {
     float frequency;
@@ -38,12 +44,6 @@ public:
     void get_samples(float* buffer, int sample_count);
     void draw();
 
-};
-
-namespace wavetable
-{
-    extern const int table_size;
-    float get_value();
 };
 
 }

@@ -18,7 +18,6 @@ int main()
     Cluster c(500.f, WaveTransforms::Saw);
 
     c.draw();
-
     c.get_samples(data, num_samples);
 
     std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);

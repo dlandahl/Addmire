@@ -27,7 +27,7 @@ namespace var {
 
 namespace wavetable
 {
-    const int table_size = 512;
+    const int table_size = 2048;
     namespace { float table[table_size]; }
 
     float get_value(float phase)
