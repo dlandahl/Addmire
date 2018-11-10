@@ -34,7 +34,7 @@ namespace wavetable
     {
         while(phase >= 1.f) { phase -= 1.f; }
         while(phase < 0.f)  { phase += 1.f; }
-        phase *= 512;
+        phase *= table_size;
 
         return table[(int)phase];
 }   };
@@ -46,9 +46,8 @@ void addmire_init(float sample_rate /*=44100.0*/, int partialc /*=512*/)
     Cluster::partials_used = partialc;
 
     for (int n = 0; n < wavetable::table_size; n++)
-    {
         wavetable::table[n] = sinf(var::tau * n / wavetable::table_size);
-}   }
+}
 
 Partial::Partial()
 {

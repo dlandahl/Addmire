@@ -15,7 +15,7 @@ int main()
 
     addmire_init();
 
-    Cluster c(1000.f, WaveTransforms::Sine);
+    Cluster c(500.f, WaveTransforms::Saw);
 
     c.draw();
 
