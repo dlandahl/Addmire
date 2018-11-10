@@ -8,12 +8,6 @@
 
 using namespace add;
 
-AdditiveProcess squarify = [](Cluster* cluster, float* args, unsigned argc)
-{
-    for (unsigned n = 1; n < Cluster::partials_used - 1; n += 2)
-        cluster->partials[n].amplitude = 0;
-};
-
 PartialIndexTransform my_transform
     = [](unsigned n, float fundamental, float &frequency, float &amplitude)
 {
