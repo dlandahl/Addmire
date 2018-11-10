@@ -38,33 +38,4 @@ PartialIndexTransform Tri
 };
 }
 
-namespace AdditiveProcesses
-{
-AdditiveProcess random_phase
-    = [](Cluster* cluster, float* args, unsigned argc)
-{
-    static std::default_random_engine generator;
-    std::uniform_real_distribution<float> distribution(0.f, (args != nullptr) ? args[0] : var::tau);
-
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
-        cluster->partials[n].offset_phase += distribution(generator);
-};
-
-AdditiveProcess repitch_ratio
-    = [](Cluster* cluster, float* args, unsigned argc)
-{
-    if (args == nullptr) return;
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
-        cluster->partials[n].frequency *= args[0];
-};
-
-AdditiveProcess repitch_hz
-    = [](Cluster* cluster, float* args, unsigned argc)
-{
-    if (args == nullptr) return;
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
-        cluster->partials[n].frequency += args[0];
-};
-}
-
 }

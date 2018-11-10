@@ -16,7 +16,6 @@ struct Cluster;
 
 using PartialIndexTransform = void (*)(unsigned partial_index, float fundamental,
     float &frequency, float &amplitude);
-using AdditiveProcess = void (*)(Cluster* cluster_to_process, float* arguments, unsigned argument_count);
 
 struct Partial
 {
