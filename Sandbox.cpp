@@ -25,23 +25,18 @@ PartialIndexTransform my_transform
 int main()
 {
     const unsigned num_samples = 22050U;
-    float data[num_samples];
-    float repitch_amount = 2.f;
-
-    for (unsigned n = 0U; n < num_samples; n++)
-        data[n] = 0.f;
+    float data[num_samples] = { 0 };
 
     addmire_init();
 
     Cluster c;
-    init_cluster_to_wave(&c, 100.f, WaveTransforms::Tri);
-    AdditiveProcesses::repitch_ratio(&c, &repitch_amount, 1U);
+    init_cluster_to_wave(&c, 300.f, WaveTransforms::Tri);
+
+    draw_cluster(&c);
 
     samples_from_cluster(&c, data, num_samples);
 
     std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
 	for (unsigned n = 0U; n < num_samples; n++)
 		file.write((const char*)& data[n], sizeof(float));
-
-    file.close();
 }
