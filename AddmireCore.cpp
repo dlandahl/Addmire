@@ -9,16 +9,6 @@ namespace add {
 
 int Cluster::partials_used;
 
-union argument
-{
-    float  float_arg;
-    float* float_ptr_arg;
-    AdditiveProcess  process_arg;
-    AdditiveProcess* process_ptr_arg;
-    Cluster  cluster_arg;
-    Cluster* cluster_ptr_arg;
-};
-
 namespace var {
     const float tau = 6.28318530;
     namespace { float nyquist, sample_rate; }
