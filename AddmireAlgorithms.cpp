@@ -28,6 +28,7 @@ void TrackedValue::set_value(float new_value)
     }
 }
 
+namespace AdditiveProcesses {
 void Repitch::proc()
 {
     float change = value.get_value();
@@ -51,7 +52,7 @@ void RepitchRatio::proc()
         frequency *= change;
     }
 }
-
+}
 namespace WaveTransforms
 {
 PartialIndexTransform Sine
