@@ -36,7 +36,7 @@ namespace wavetable
         phase *= table_size;
 
         return table[(int)phase];
-}   };
+}   }
 
 void addmire_init(float sample_rate /*=44100.0*/, int partialc /*=512*/)
 {
@@ -58,7 +58,7 @@ Partial::Partial()
 
 Cluster::Cluster(float fundamental, PartialIndexTransform transform)
 {
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
+    for (int n = 0; n < Cluster::partials_used; n++)
     {
         Partial& p = partials[n];
 
@@ -70,12 +70,12 @@ Cluster::Cluster(float fundamental, PartialIndexTransform transform)
 
 void Cluster::get_samples(float* buffer, int buffersize)
 {
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
+    for (int n = 0; n < Cluster::partials_used; n++)
     {
         auto& [frequency, offset, amplitude, phase] = partials[n];
         if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
 
-        for (unsigned s = 0; s < buffersize; s++)
+        for (int s = 0; s < buffersize; s++)
         {
             buffer[s] += amplitude * wavetable::get_value(phase + offset / var::tau);
             phase += double(frequency) / var::get_sample_rate();
@@ -88,10 +88,10 @@ void Cluster::draw()
     const int x_res = 250;
 
     char data[y_res];
-    for (unsigned n = 0; n < y_res; n++)
+    for (int n = 0; n < y_res; n++)
         data[n] = '1';
 
-    for (unsigned n = 0; n < Cluster::partials_used; n++)
+    for (int n = 0; n < Cluster::partials_used; n++)
     {
         if (partials[n].frequency >= var::get_nyquist()) continue;
         data[int(sqrt(partials[n].frequency) * y_res / sqrt(var::get_nyquist()))] = '0';
@@ -102,9 +102,9 @@ void Cluster::draw()
     const char header[] = "P1\n250 1000\n";
     file.write(header, 12);
 
-    for (unsigned y = 1; y <= y_res; y++)
+    for (int y = 1; y <= y_res; y++)
     {
-        for (unsigned x = 0; x < x_res; x++)
+        for (int x = 0; x < x_res; x++)
             file << data[y_res - y] << ' ';
 
         file << '\n';

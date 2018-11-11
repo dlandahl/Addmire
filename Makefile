@@ -1,3 +1,6 @@
 
 addtest.exe: AddmireCore.cpp AddmireAlgorithms.cpp Sandbox.cpp
-	g++ $^ -o $@ -std=c++17
+	g++ -Wall -Wextra -Wpedantic $^ -o $@ -std=c++17
+
+clean:
+	rm addtest.exe

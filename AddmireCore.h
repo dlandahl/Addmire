@@ -8,7 +8,7 @@ namespace var {
     float get_sample_rate();
     void set_sample_rate(float new_sample_rate);
     void set_partial_count(int new_partial_count);
-};
+}
 
 void addmire_init(float sample_rate=44100.0f, int partial_count=512);
 
@@ -16,7 +16,7 @@ namespace wavetable
 {
     extern const int table_size;
     float get_value();
-};
+}
 
 struct Partial
 {
@@ -65,10 +65,10 @@ public:
     float get_value();
 
 private:
+    Quality quality;
+
     float current_value;
     float value_delta = 0;
-
-    Quality quality;
 };
 
 }
