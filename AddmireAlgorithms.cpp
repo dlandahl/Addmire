@@ -7,6 +7,51 @@
 
 namespace add {
 
+float TrackedValue::get_value()
+{
+    float ret = value_delta;
+    value_delta = quality;
+    return ret;
+}
+
+void TrackedValue::set_value(float new_value)
+{
+    if (quality == additive)
+    {
+        value_delta = (new_value - current_value);
+        current_value += value_delta;
+    }
+    else if (quality == multiplicative)
+    {
+        value_delta = (new_value / current_value);
+        current_value *= value_delta;
+    }
+}
+
+void Repitch::proc()
+{
+    float change = value.get_value();
+
+    for (unsigned n = 0; n < Cluster::partials_used; n++)
+    {
+        auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
+        if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
+        frequency += change;
+    }
+}
+
+void RepitchRatio::proc()
+{
+    float change = value.get_value();
+
+    for (unsigned n = 0; n < Cluster::partials_used; n++)
+    {
+        auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
+        if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
+        frequency *= change;
+    }
+}
+
 namespace WaveTransforms
 {
 PartialIndexTransform Sine

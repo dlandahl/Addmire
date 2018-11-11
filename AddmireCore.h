@@ -28,8 +28,8 @@ struct Partial
     Partial();
 };
 
-using PartialIndexTransform = void (*)(unsigned partial_index, float fundamental,
-    Partial &partial);
+using PartialIndexTransform = void (*)(unsigned partial_index,
+    float fundamental, Partial &partial);
 
 class Cluster
 {
@@ -44,6 +44,13 @@ public:
     void get_samples(float* buffer, int sample_count);
     void draw();
 
+};
+
+class AdditiveProcessor
+{
+public:
+    Cluster* target_cluster;
+    virtual void proc() = 0;
 };
 
 }

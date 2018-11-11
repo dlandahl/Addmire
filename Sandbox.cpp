@@ -10,13 +10,19 @@ using namespace add;
 
 int main()
 {
-    const unsigned num_samples = 44100U * 10;
+    const unsigned num_samples = 44100U;
     float data[num_samples] = { 0 };
 
     addmire_init();
 
-    Cluster c(500.f, WaveTransforms::Saw);
+    Cluster c(55.f, WaveTransforms::Saw);
 
+    Repitch repitch;
+    repitch.target_cluster = &c;
+
+    repitch.set_pitch(200.f);
+    repitch.proc();
+    
     c.draw();
     c.get_samples(data, num_samples);
 
