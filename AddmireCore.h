@@ -39,8 +39,8 @@ public:
 
     Partial partials[max_size];
 
-    Cluster() = default;
     Cluster(float fundamental, PartialIndexTransform transform);
+    Cluster() = default;
     void get_samples(float* buffer, int sample_count);
     void draw();
 
@@ -48,9 +48,13 @@ public:
 
 class AdditiveProcessor
 {
-public:
+protected:
     Cluster* target_cluster;
+public:
     virtual void proc() = 0;
+
+    AdditiveProcessor(Cluster* c) : target_cluster(c) { }
+    AdditiveProcessor() = delete;
 };
 
 class TrackedValue

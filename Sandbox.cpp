@@ -17,8 +17,7 @@ int main()
 
     Cluster c(55.f, WaveTransforms::Saw);
 
-    AdditiveProcesses::Repitch repitch;
-    repitch.target_cluster = &c;
+    AdditiveProcesses::Repitch repitch(&c);
 
     repitch.set_pitch(200.f);
     repitch.proc();
