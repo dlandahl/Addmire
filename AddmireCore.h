@@ -53,4 +53,22 @@ public:
     virtual void proc() = 0;
 };
 
+class TrackedValue
+{
+public:
+    enum Quality { additive = 0, multiplicative = 1 };
+    
+    TrackedValue(Quality qual) : quality(qual), current_value(qual) { }
+    TrackedValue() = delete;
+
+    void set_value(float new_value);
+    float get_value();
+
+private:
+    float current_value;
+    float value_delta = 0;
+
+    Quality quality;
+};
+
 }
