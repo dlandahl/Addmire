@@ -7,52 +7,35 @@
 
 namespace add {
 
-float TrackedValue::get_value()
-{
-    float ret = value_delta;
-    value_delta = quality;
-    return ret;
-}
-
-void TrackedValue::set_value(float new_value)
-{
-    if (quality == additive)
-    {
-        value_delta = (new_value - current_value);
-        current_value += value_delta;
-    }
-    else if (quality == multiplicative)
-    {
-        value_delta = (new_value / current_value);
-        current_value *= value_delta;
-    }
-}
-
 namespace AdditiveProcesses {
 void Repitch::proc()
 {
-    float change = value.get_value();
+    if (is_absolute) delta = absolute.get_value();
+    else             delta = ratio.get_value();
 
     for (int n = 0; n < Cluster::partials_used; n++)
     {
         auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
         if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
-        frequency += change;
+        if (is_absolute) frequency += delta;
+        else             frequency *= delta;
     }
 }
 
-void RepitchRatio::proc()
+void RandomPhase::proc()
 {
-    float change = value.get_value();
+    std::uniform_real_distribution<float> distribution { 0, max };
 
     for (int n = 0; n < Cluster::partials_used; n++)
-    {
+    {   
         auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
         if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
-        frequency *= change;
+        offset = distribution(engine);
     }
 }
+
 }
+
 namespace WaveTransforms
 {
 PartialIndexTransform Sine

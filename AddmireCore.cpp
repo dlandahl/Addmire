@@ -21,7 +21,7 @@ namespace var {
     }
 
     void set_partial_count(int partialc) {
-        Cluster::partials_used = partialc;
+        if (partialc <= Cluster::max_size) Cluster::partials_used = partialc;
 }   }
 
 namespace wavetable
@@ -109,5 +109,26 @@ void Cluster::draw()
 
         file << '\n';
 }   }
+
+float TrackedValue::get_value()
+{
+    float ret = value_delta;
+    value_delta = quality;
+    return ret;
+}
+
+void TrackedValue::set_value(float new_value)
+{
+    if (quality == additive)
+    {
+        value_delta = (new_value - current_value);
+        current_value += value_delta;
+    }
+    else if (quality == multiplicative)
+    {
+        value_delta = (new_value / current_value);
+        current_value *= value_delta;
+    }
+}
 
 }

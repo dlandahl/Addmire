@@ -17,10 +17,10 @@ int main()
 
     Cluster c(55.f, WaveTransforms::Saw);
 
-    AdditiveProcesses::Repitch repitch(&c);
+    AdditiveProcesses::RandomPhase phaserand(&c);
 
-    repitch.set_pitch(200.f);
-    repitch.proc();
+    phaserand.set_strength(var::tau);
+    phaserand.proc();
     
     c.draw();
     c.get_samples(data, num_samples);
