@@ -42,6 +42,14 @@ public:
     void proc() override;
 };
 
+class FlipFrequencies : public AdditiveProcessor
+{
+public:
+    FlipFrequencies(Cluster* c) : AdditiveProcessor(c) { }
+    float pivot;
+    void proc() override;
+};
+
 }
 
 }

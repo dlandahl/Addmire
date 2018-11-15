@@ -8,7 +8,8 @@ namespace add {
 
 int Cluster::partials_used;
 
-namespace var {
+namespace var
+{
     const float tau = 6.28318530;
     namespace { float nyquist, sample_rate; }
     
@@ -35,6 +36,12 @@ namespace wavetable
         while(phase < 0.f)  { phase += 1.f; }
         phase *= table_size;
 
+        //float mu = phase - std::floor(phase);
+
+        //float y1 = table[(int)std::ceil(phase)];
+        //float y2 = table[(int)std::floor(phase)];
+
+        //return y1*(1 - mu) + y2*mu;
         return table[(int)phase];
 }   }
 
@@ -78,7 +85,7 @@ void Cluster::get_samples(float* buffer, int buffersize)
         for (int s = 0; s < buffersize; s++)
         {
             buffer[s] += amplitude * wavetable::get_value(phase + offset / var::tau);
-            phase += double(frequency) / var::get_sample_rate();
+            phase += frequency / var::get_sample_rate();
             if (phase >= 1.0) { phase -= 1.0; }
 }   }   }
 

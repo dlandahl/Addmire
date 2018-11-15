@@ -16,7 +16,7 @@ void Repitch::proc()
     for (int n = 0; n < Cluster::partials_used; n++)
     {
         auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
-        if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
+        if (frequency >= var::get_nyquist() || amplitude == 0.f) continue;
         if (is_absolute) frequency += delta;
         else             frequency *= delta;
     }
@@ -29,11 +29,23 @@ void RandomPhase::proc()
     for (int n = 0; n < Cluster::partials_used; n++)
     {   
         auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
-        if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
+        if (frequency >= var::get_nyquist() || amplitude == 0.f) continue;
         offset = distribution(engine);
     }
 }
 
+void FlipFrequencies::proc()
+{
+    for (int n = 0; n < Cluster::partials_used; n++)
+    {
+        auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
+        if (frequency >= var::get_nyquist() || amplitude == 0.f) continue;
+        float diff = frequency - pivot;
+
+        if (diff <= 0.f) frequency += 2 * diff;
+        else             frequency -= 2 * diff;
+    }
+}
 }
 
 namespace WaveTransforms

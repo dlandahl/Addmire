@@ -15,14 +15,14 @@ int main()
 
     addmire_init();
 
-    Cluster c(55.f, WaveTransforms::Saw);
+    Cluster c(110.f, WaveTransforms::Square);
 
-    AdditiveProcesses::RandomPhase phaserand(&c);
+    AdditiveProcesses::FlipFrequencies flip(&c);
 
-    phaserand.set_strength(var::tau);
-    phaserand.proc();
-    
-    c.draw();
+    flip.pivot = 342.f;
+    flip.proc();
+
+    //c.draw();
     c.get_samples(data, num_samples);
 
     std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
