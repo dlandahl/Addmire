@@ -74,5 +74,4 @@ private:
     float current_value;
     float value_delta = 0;
 };
-
 }
