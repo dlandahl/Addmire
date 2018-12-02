@@ -41,6 +41,8 @@ public:
 
     Cluster(float fundamental, PartialIndexTransform transform);
     Cluster() = default;
+
+    static Cluster from_dft(float* data, unsigned size, unsigned bin_count);
     void get_samples(float* buffer, int sample_count);
     void draw();
 

@@ -1,6 +1,8 @@
 
+#include <vector>
 #include <cmath>
 #include <fstream>
+#include <complex>
 
 #include "AddmireCore.h"
 
@@ -27,7 +29,7 @@ namespace var
 
 namespace wavetable
 {
-    const int table_size = 2048;
+    const int table_size = 262144;
     namespace { float table[table_size]; }
 
     float get_value(float phase)
@@ -135,7 +137,36 @@ void TrackedValue::set_value(float new_value)
     {
         value_delta = (new_value / current_value);
         current_value *= value_delta;
+}   }
+
+Cluster Cluster::from_dft(float* data, unsigned size, unsigned bin_count)
+{
+    Cluster c;
+    c.partials_used = bin_count;
+
+    float real = 0.f;
+    float imag = 0.f;
+
+    for (unsigned b = 0; b < bin_count; b++)
+    {
+        auto& [frequency, offset, amplitude, phase] = c.partials[b];
+        std::complex<float> complex(0.f, 0.f);
+
+        for (unsigned s = 0; s < size; s++)
+        {
+            real = data[s] * cos(var::tau * s * b / size);
+            imag = data[s] * sin(var::tau * s * b / size) * -1.f;
+
+            complex += std::complex<float>(real, imag);
+        }
+        complex /= size;
+
+        amplitude = sqrt(pow(complex.real(), 2) + pow(complex.imag(), 2));
+        offset    = atan(complex.imag() / complex.real());
+        frequency = (var::get_sample_rate() / bin_count) * b;
     }
+    
+    return c;
 }
 
 }
