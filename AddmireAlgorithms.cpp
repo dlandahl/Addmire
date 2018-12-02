@@ -53,8 +53,8 @@ namespace WaveTransforms
 PartialIndexTransform Sine
     = [](unsigned n, float fundamental, Partial &p)
 {
+    p.frequency = (n + 1) * fundamental;
     p.amplitude = 0.f;
-    p.frequency = fundamental;
 
     if (n == 0) p.amplitude = 1.f;
 };
