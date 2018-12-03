@@ -16,8 +16,8 @@ int main()
     addmire_init();
 
     Cluster c = Cluster(220.f, WaveTransforms::Saw);
-    //c.get_samples(data, num_samples);
-    //c = Cluster::from_dft(data, num_samples, 512);
+    c.get_samples(data, num_samples);
+    c = Cluster::from_dft(data, num_samples, 512);
     c.get_samples(data, num_samples);
 
     std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
