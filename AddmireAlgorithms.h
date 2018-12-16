@@ -13,19 +13,13 @@ namespace AdditiveProcesses {
 
 class Repitch : public AdditiveProcessor
 {
-    TrackedValue absolute = TrackedValue(TrackedValue::Quality::additive);
-    TrackedValue ratio    = TrackedValue(TrackedValue::Quality::multiplicative);
-
-    float delta;
-    bool is_absolute = false;
-
+    float value;
 public:
     Repitch(Cluster* c) : AdditiveProcessor(c) { }
 
     void set_pitch(float new_value) 
     {
-        if (is_absolute) absolute.set_value(new_value);
-        else ratio.set_value(new_value);
+        value = new_value;
     }
 
     void proc() override;

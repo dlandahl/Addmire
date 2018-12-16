@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <complex>
+#include <iostream>
 
 #include "AddmireCore.h"
 
@@ -29,7 +30,6 @@ namespace var
 
 namespace wavetable
 {
-    const int table_size = 262144;
     namespace { float table[table_size]; }
 
     float get_value(float phase)
@@ -119,53 +119,32 @@ void Cluster::draw()
         file << '\n';
 }   }
 
-float TrackedValue::get_value()
-{
-    float ret = value_delta;
-    value_delta = quality;
-    return ret;
-}
-
-void TrackedValue::set_value(float new_value)
-{
-    if (quality == additive)
-    {
-        value_delta = (new_value - current_value);
-        current_value += value_delta;
-    }
-    else if (quality == multiplicative)
-    {
-        value_delta = (new_value / current_value);
-        current_value *= value_delta;
-}   }
-
-Cluster Cluster::from_dft(float* data, unsigned size, unsigned bin_count)
+Cluster Cluster::from_dft(float* data, unsigned size)
 {
     Cluster c;
-    c.partials_used = bin_count;
+    c.partials_used = size / 2;
 
-    float real = 0.f;
-    float imag = 0.f;
-
-    for (unsigned b = 0; b < bin_count; b++)
+    for (unsigned b = 0; b < size; b++)
     {
         auto& [frequency, offset, amplitude, phase] = c.partials[b];
         std::complex<float> complex(0.f, 0.f);
 
         for (unsigned s = 0; s < size; s++)
         {
-            real = data[s] * cos(var::tau * s * b / size);
-            imag = data[s] * sin(var::tau * s * b / size) * -1.f;
+            float real = data[s] * sin(var::tau * s * b / size);
+            float imag = data[s] * cos(var::tau * s * b / size) * -1.f;
 
             complex += std::complex<float>(real, imag);
         }
         complex /= size;
+        if (b >= size / 2) continue;
 
         amplitude = sqrt(pow(complex.real(), 2) + pow(complex.imag(), 2));
         offset    = atan(complex.imag() / complex.real());
-        frequency = (var::get_sample_rate() / bin_count) * b;
+        frequency = (var::get_sample_rate() / size) * b;
+        if (amplitude > 0.001) std::cout << "Frequency: " << frequency << " Phase: " << offset / 3.14159265 << '\n';
     }
-    
+
     return c;
 }
 

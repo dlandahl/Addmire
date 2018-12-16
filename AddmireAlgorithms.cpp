@@ -10,15 +10,11 @@ namespace add {
 namespace AdditiveProcesses {
 void Repitch::proc()
 {
-    if (is_absolute) delta = absolute.get_value();
-    else             delta = ratio.get_value();
-
     for (int n = 0; n < Cluster::partials_used; n++)
     {
         auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
         if (frequency >= var::get_nyquist() || amplitude == 0.f) continue;
-        if (is_absolute) frequency += delta;
-        else             frequency *= delta;
+        frequency *= value;
     }
 }
 

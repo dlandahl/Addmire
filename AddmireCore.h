@@ -14,7 +14,7 @@ void addmire_init(float sample_rate=44100.0f, int partial_count=512);
 
 namespace wavetable
 {
-    extern const int table_size;
+    inline const int table_size = 512;
     float get_value();
 }
 
@@ -34,7 +34,7 @@ using PartialIndexTransform = void (*)(unsigned partial_index,
 class Cluster
 {
 public:
-    const static int max_size = 1024;
+    const static int max_size = 4410;
     static int partials_used;
 
     Partial partials[max_size];
@@ -42,7 +42,7 @@ public:
     Cluster(float fundamental, PartialIndexTransform transform);
     Cluster() = default;
 
-    static Cluster from_dft(float* data, unsigned size, unsigned bin_count);
+    static Cluster from_dft(float* data, unsigned size);
     void get_samples(float* buffer, int sample_count);
     void draw();
 
@@ -57,23 +57,5 @@ public:
 
     AdditiveProcessor(Cluster* c) : target_cluster(c) { }
     AdditiveProcessor() = delete;
-};
-
-class TrackedValue
-{
-public:
-    enum Quality { additive = 0, multiplicative = 1 };
-    
-    TrackedValue(Quality qual) : quality(qual), current_value(qual) { }
-    TrackedValue() = delete;
-
-    void set_value(float new_value);
-    float get_value();
-
-private:
-    Quality quality;
-
-    float current_value;
-    float value_delta = 0;
 };
 }
