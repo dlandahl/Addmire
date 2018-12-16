@@ -3,7 +3,7 @@
 
 namespace add {
 namespace var {
-    extern const float tau;
+    inline const float tau = 6.28318530;
     float get_nyquist();
     float get_sample_rate();
     void set_sample_rate(float new_sample_rate);

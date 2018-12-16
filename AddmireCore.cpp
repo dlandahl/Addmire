@@ -13,7 +13,6 @@ int Cluster::partials_used;
 
 namespace var
 {
-    const float tau = 6.28318530;
     namespace { float nyquist, sample_rate; }
     
     float get_nyquist()     { return nyquist; }
@@ -124,7 +123,7 @@ Cluster Cluster::from_dft(float* data, unsigned size)
     Cluster c;
     c.partials_used = size / 2;
 
-    for (unsigned b = 0; b < size; b++)
+    for (unsigned b = 0; b < size / 2; b++)
     {
         auto& [frequency, offset, amplitude, phase] = c.partials[b];
         std::complex<float> complex(0.f, 0.f);
@@ -137,12 +136,10 @@ Cluster Cluster::from_dft(float* data, unsigned size)
             complex += std::complex<float>(real, imag);
         }
         complex /= size;
-        if (b >= size / 2) continue;
 
         amplitude = sqrt(pow(complex.real(), 2) + pow(complex.imag(), 2));
         offset    = atan(complex.imag() / complex.real());
         frequency = (var::get_sample_rate() / size) * b;
-        if (amplitude > 0.001) std::cout << "Frequency: " << frequency << " Phase: " << offset / 3.14159265 << '\n';
     }
 
     return c;

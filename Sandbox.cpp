@@ -23,6 +23,6 @@ int main()
     c.get_samples(data, num_samples);
 
     std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
-	for (unsigned n = 0u; n < num_samples; n++)
-		file.write((const char*)& data[n], sizeof(float));
+    for (unsigned n = 0u; n < num_samples; n++)
+        file.write((const char*)& data[n], sizeof(float));
 }
