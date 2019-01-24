@@ -3,7 +3,7 @@
 
 namespace add {
 namespace var {
-    inline const float tau = 6.28318530;
+    inline float const tau = 6.28318530;
     float get_nyquist();
     float get_sample_rate();
     void set_sample_rate(float new_sample_rate);
@@ -14,7 +14,7 @@ void addmire_init(float sample_rate=44100.0f, int partial_count=512);
 
 namespace wavetable
 {
-    inline const int table_size = 512;
+    inline int const table_size = 512;
     float get_value();
 }
 
@@ -34,7 +34,7 @@ using PartialIndexTransform = void (*)(unsigned partial_index,
 class Cluster
 {
 public:
-    const static int max_size = 4410;
+    static int const max_size = 4410;
     static int partials_used;
 
     Partial partials[max_size];

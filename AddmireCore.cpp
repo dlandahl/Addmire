@@ -3,7 +3,6 @@
 #include <cmath>
 #include <fstream>
 #include <complex>
-#include <iostream>
 
 #include "AddmireCore.h"
 
@@ -92,8 +91,8 @@ void Cluster::get_samples(float* buffer, int buffersize)
 
 void Cluster::draw()
 {
-    const int y_res = 1000;
-    const int x_res = 250;
+    int const y_res = 1000;
+    int const x_res = 250;
 
     char data[y_res];
     for (int n = 0; n < y_res; n++)
@@ -101,13 +100,15 @@ void Cluster::draw()
 
     for (int n = 0; n < Cluster::partials_used; n++)
     {
-        if (partials[n].frequency >= var::get_nyquist()) continue;
-        data[int(sqrt(partials[n].frequency) * y_res / sqrt(var::get_nyquist()))] = '0';
+        auto& [frequency, offset, amplitude, phase] = partials[n];
+        if (frequency >= var::get_nyquist()) continue;
+        if (amplitude >= 0.001)
+            data[int(sqrt(frequency) * y_res / sqrt(var::get_nyquist()))] = '0';
     }
 
     std::fstream file("test_image.pbm", std::fstream::out | std::fstream::binary);
 
-    const char header[] = "P1\n250 1000\n";
+    char const header[] = "P1\n250 1000\n";
     file.write(header, 12);
 
     for (int y = 1; y <= y_res; y++)
