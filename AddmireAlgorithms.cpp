@@ -8,33 +8,12 @@
 namespace add {
 
 namespace AdditiveProcesses {
-void Repitch::proc()
-{
-    for (int n = 0; n < Cluster::partials_used; n++)
-    {
-        auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
-        if (frequency >= var::get_nyquist() || amplitude == 0.f) continue;
-        frequency *= value;
-    }
-}
-
-void RandomPhase::proc()
-{
-    std::uniform_real_distribution<float> distribution { 0, max };
-
-    for (int n = 0; n < Cluster::partials_used; n++)
-    {   
-        auto& [frequency, offset, amplitude, phase] = target_cluster->partials[n];
-        if (frequency >= var::get_nyquist() || amplitude == 0.f) continue;
-        offset = distribution(engine);
-    }
-}
 
 }
 
 namespace WaveTransforms
 {
-PartialIndexTransform Sine
+WaveTransform Sine
     = [](unsigned n, float fundamental, Partial &p)
 {
     p.frequency = (n + 1) * fundamental;
@@ -43,14 +22,14 @@ PartialIndexTransform Sine
     if (n == 0) p.amplitude = 1.f;
 };
 
-PartialIndexTransform Saw
+WaveTransform Saw
     = [](unsigned n, float fundamental, Partial &p)
 {
     p.frequency = (n + 1) * fundamental;
     p.amplitude = 1.f / (n + 1);
 };
 
-PartialIndexTransform Square
+WaveTransform Square
     = [](unsigned n, float fundamental, Partial &p)
 {
     p.frequency = (n + 1) * fundamental;
@@ -59,7 +38,7 @@ PartialIndexTransform Square
     if (n % 2) p.amplitude = 0.f;
 };
 
-PartialIndexTransform Tri
+WaveTransform Tri
     = [](unsigned n, float fundamental, Partial &p)
 {
     p.frequency = (n + 1) * fundamental;

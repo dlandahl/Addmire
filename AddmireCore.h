@@ -43,34 +43,26 @@ struct Partial
     Partial();
 };
 
-using PartialIndexTransform = void (*)(unsigned partial_index,
+using WaveTransform = void (*)(unsigned partial_index,
     float fundamental, Partial &partial);
 
-class Cluster
+using PartialTransform = void (*) (Partial partial, int index, void* data);
+
+struct Cluster
 {
-public:
-    static int const max_size = 4410;
+    static int const max_size = 1024;
     static int partials_used;
 
     Partial partials[max_size];
 
-    Cluster(float fundamental, PartialIndexTransform transform);
+    Cluster(float fundamental, WaveTransform transform);
     Cluster() = default;
 
     static Cluster from_dft(float* data, unsigned size);
     void get_samples(float* buffer, int sample_count);
-    void draw();
     VisualData get_visual_data(unsigned resolution);
+    void draw();
+    void apply_to_all_partials(PartialTransform, void* data=nullptr);
 };
 
-class AdditiveProcessor
-{
-protected:
-    Cluster* target_cluster;
-public:
-    virtual void proc() = 0;
-
-    AdditiveProcessor(Cluster* c) : target_cluster(c) { }
-    AdditiveProcessor() = delete;
-};
 }

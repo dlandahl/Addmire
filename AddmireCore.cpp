@@ -62,7 +62,7 @@ Partial::Partial()
     current_phase = 0.f;
 }
 
-Cluster::Cluster(float fundamental, PartialIndexTransform transform)
+Cluster::Cluster(float fundamental, WaveTransform transform)
 {
     for (int n = 0; n < Cluster::partials_used; n++)
     {
@@ -153,5 +153,11 @@ Cluster Cluster::from_dft(float* data, unsigned size)
 
     return c;
 }
+
+void Cluster::apply_to_all_partials(void(*function)(Partial partial, int index, void* data), void* data=nullptr)
+{
+    
+}
+
 
 }
