@@ -1,5 +1,13 @@
 
+# nonsense
+.DS_Store
 .vscode/
+
+# binaries
 *.exe
-test_data.raw
-test_image.pbm
+
+# test data
+*.raw
+*.pbm
+*.pgm
+test.txt
