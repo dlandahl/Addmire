@@ -1,6 +1,8 @@
 
 #pragma once
 
+#define UNWRAP_PARTIAL(X) auto& [frequency, offset, amplitude, phase] = X
+
 namespace add {
 namespace var {
     inline float const tau = 6.28318530;
@@ -46,7 +48,7 @@ struct Partial
 using WaveTransform = void (*)(unsigned partial_index,
     float fundamental, Partial &partial);
 
-using PartialTransform = void (*) (Partial partial, int index, void* data);
+using PartialTransform = void (*)(Partial& partial, void* data);
 
 struct Cluster
 {
@@ -58,7 +60,7 @@ struct Cluster
     Cluster(float fundamental, WaveTransform transform);
     Cluster() = default;
 
-    static Cluster from_dft(float* data, unsigned size);
+    static Cluster from_dft(float* data, unsigned size=512);
     void get_samples(float* buffer, int sample_count);
     VisualData get_visual_data(unsigned resolution);
     void draw();

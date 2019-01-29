@@ -20,11 +20,9 @@ int main()
     for (unsigned n = 0; n < num_samples; n++)
         data[n] = distribution(engine);
     
-
-//    auto a = add::Cluster(440, add::WaveTransforms::Tri);
-//    a.get_samples(data, num_samples);
-    auto c = add::Cluster::from_dft(data, num_samples);
-    c.draw();
+    auto a = add::Cluster::from_dft(data);
+    a.get_samples(data, num_samples);
+    a.draw();
 
 //    std::fstream file("test_data.raw", std::fstream::out | std::fstream::binary);
 //    for (unsigned n = 0u; n < num_samples; n++)

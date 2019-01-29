@@ -7,7 +7,7 @@
 namespace add {
 
 namespace WaveTransforms
-{ extern PartialIndexTransform Sine, Tri, Square, Saw; }
+{ extern WaveTransform Sine, Tri, Square, Saw; }
 
 namespace AdditiveProcesses {
 

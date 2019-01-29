@@ -78,7 +78,7 @@ void Cluster::get_samples(float* buffer, int buffersize)
 {
     for (int n = 0; n < Cluster::partials_used; n++)
     {
-        auto& [frequency, offset, amplitude, phase] = partials[n];
+        UNWRAP_PARTIAL(partials[n]);
         if (frequency >= var::get_nyquist() || amplitude <= 0.f) continue;
 
         for (int s = 0; s < buffersize; s++)
@@ -98,7 +98,7 @@ VisualData Cluster::get_visual_data(unsigned resolution)
 
     for (int n = 0; n < Cluster::partials_used; n++)
     {
-        auto& [frequency, offset, amplitude, phase] = partials[n];
+        UNWRAP_PARTIAL(partials[n]);
         if (frequency >= var::get_nyquist()) continue;
         if (amplitude <= 0.001) continue;
         data[int(sqrt(frequency) * resolution / sqrt(var::get_nyquist()))] = uint8_t(255*amplitude);
@@ -127,14 +127,14 @@ void Cluster::draw()
             file << visual_data.data[y_res - y];
 }
 
-Cluster Cluster::from_dft(float* data, unsigned size)
+Cluster Cluster::from_dft(float* data, unsigned size /*=512*/)
 {
     Cluster c;
     c.partials_used = size / 2;
+    if (data == nullptr) return c;
 
     for (unsigned b = 0; b < size / 2; b++)
     {
-        auto& [frequency, offset, amplitude, phase] = c.partials[b];
         std::complex<float> complex(0.f, 0.f);
 
         for (unsigned s = 0; s < size; s++)
@@ -146,6 +146,7 @@ Cluster Cluster::from_dft(float* data, unsigned size)
         }
         complex /= size;
 
+        UNWRAP_PARTIAL(c.partials[b]);
         amplitude = sqrt(pow(complex.real(), 2) + pow(complex.imag(), 2));
         offset    = atan(complex.imag() / complex.real());
         frequency = (var::get_sample_rate() / size) * b;
@@ -154,10 +155,15 @@ Cluster Cluster::from_dft(float* data, unsigned size)
     return c;
 }
 
-void Cluster::apply_to_all_partials(void(*function)(Partial partial, int index, void* data), void* data=nullptr)
+void Cluster::apply_to_all_partials(PartialTransform transform, void* data)
 {
-    
-}
+    for (int n = 0; n < partials_used; n++)
+    {
+        UNWRAP_PARTIAL(partials[n]);
+        if (frequency >= var::get_nyquist()) continue;
 
+        transform(partials[n], data);
+    }
+}
 
 }
