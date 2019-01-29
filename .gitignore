@@ -4,10 +4,11 @@
 .vscode/
 
 # binaries
-*.exe
+.exe
+.out
+.dll
+.a
+.o
 
 # test data
-*.raw
-*.pbm
-*.pgm
-test.txt
+*test*
