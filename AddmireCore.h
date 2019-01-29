@@ -18,6 +18,21 @@ namespace wavetable
     float get_value();
 }
 
+struct VisualData
+{
+    VisualData(unsigned resolution) : res(resolution)
+    {
+        data = (uint8_t*) malloc(resolution);
+    }
+
+    ~VisualData() { free(data); }
+
+    uint8_t* data = nullptr;
+    unsigned resolution() { return res; }
+private:
+    unsigned res = 0;
+};
+
 struct Partial
 {
     float frequency;
@@ -45,7 +60,7 @@ public:
     static Cluster from_dft(float* data, unsigned size);
     void get_samples(float* buffer, int sample_count);
     void draw();
-
+    VisualData get_visual_data(unsigned resolution);
 };
 
 class AdditiveProcessor

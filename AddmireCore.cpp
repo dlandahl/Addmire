@@ -1,5 +1,4 @@
 
-#include <vector>
 #include <cmath>
 #include <fstream>
 #include <complex>
@@ -89,35 +88,44 @@ void Cluster::get_samples(float* buffer, int buffersize)
             if (phase >= 1.0) { phase -= 1.0; }
 }   }   }
 
-void Cluster::draw()
+VisualData Cluster::get_visual_data(unsigned resolution)
 {
-    int const y_res = 1000;
-    int const x_res = 250;
+    auto data = (uint8_t*) malloc(resolution);
+    VisualData image(resolution);
 
-    char data[y_res];
-    for (int n = 0; n < y_res; n++)
-        data[n] = '1';
+    for (unsigned n = 0; n < resolution; n++)
+        data[n] = 0;
 
     for (int n = 0; n < Cluster::partials_used; n++)
     {
         auto& [frequency, offset, amplitude, phase] = partials[n];
         if (frequency >= var::get_nyquist()) continue;
-        if (amplitude >= 0.001)
-            data[int(sqrt(frequency) * y_res / sqrt(var::get_nyquist()))] = '0';
+        if (amplitude <= 0.001) continue;
+        data[int(sqrt(frequency) * resolution / sqrt(var::get_nyquist()))] = uint8_t(255*amplitude);
     }
 
-    std::fstream file("test_image.pbm", std::fstream::out | std::fstream::binary);
+    memcpy(image.data, data, resolution);
+    free(data);
 
-    char const header[] = "P1\n250 1000\n";
-    file.write(header, 12);
+    return image;
+}
+
+void Cluster::draw()
+{
+    int const y_res = 1000;
+    int const x_res = 250;
+
+    VisualData visual_data = get_visual_data(y_res);
+
+    std::fstream file("test_image.pgm", std::fstream::out | std::fstream::binary);
+
+    char const header[] = "P5\n250 1000\n255\n";
+    file.write(header, 16);
 
     for (int y = 1; y <= y_res; y++)
-    {
         for (int x = 0; x < x_res; x++)
-            file << data[y_res - y] << ' ';
-
-        file << '\n';
-}   }
+            file << visual_data.data[y_res - y];
+}
 
 Cluster Cluster::from_dft(float* data, unsigned size)
 {
